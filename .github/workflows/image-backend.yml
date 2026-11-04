@@ -30,21 +30,6 @@ jobs:
       DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
       DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-  release:
-    if: github.event_name == 'release' && github.event.action == 'created'
-    uses: ./.github/workflows/_build-image.yml
-    with:
-      image: reallibrephotos/librephotos
-      dockerfile: deploy/docker/backend/Dockerfile
-      base-image: reallibrephotos/librephotos-base
-      release-tag: ${{ github.event.release.tag_name }}
-      build-args: |
-        IMAGE_TAG=${{ github.event.release.tag_name }}
-        GIT_HASH=${{ github.sha }}
-    secrets:
-      DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
-      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-
   # deploy/k8s pins its images by hand (Renovate skips it) and sat on 2023w31
   # for years unnoticed. Fail the release when its tag still pins another one,
   # so Kubernetes installs that check out the tag run it. Separate from the
